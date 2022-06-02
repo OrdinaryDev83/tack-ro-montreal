@@ -1,6 +1,5 @@
 import numpy as np
 
-
 def init_mat(n, edges, op_plus, e_plus, op_times, e_times):
     # Set up the matrix
     M = np.full((n, n), e_plus, dtype=np.object_)

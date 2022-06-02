@@ -6,31 +6,16 @@ M = np.array([
     [2, 0, 0, 3],
     [0, 0, 0, 0]
     ])
-g = Graph(4, M, True, True)
-D, P = floyd_warshall(g)
-print(g.adj)
-print(D)
-print(P)
+dir = True
+E_M = edges_from_matrix(4, M)
+g = Graph(4, E_M, dir)
+assert g.n == 4
+assert len(g.edges) == 5
+assert g.directed == dir
 
-## tests : 
-
-################ liste d'adjacences
-#assert g.adjlists == 
-
-################ directed ou non
-
-
-
-################ costs ou non
-
-
-
-
-
-################# matrice des couts
-
-
-
-
-
-##################
+E = np.array([(0, 1, 1), (0, 2, 2), (1, 3, 1), (2, 0, 2), (2, 3, 3)])
+dir = True
+g = Graph(4, E, dir)
+assert g.n == 4
+assert len(g.edges) == 5
+assert g.directed == dir
