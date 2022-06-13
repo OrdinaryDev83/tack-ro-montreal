@@ -2,7 +2,7 @@ from displayGraph import *
 from utils import *
 import matplotlib.pyplot as plt
 import osmnx.distance as distance
-from theoric.find_cycle import *
+from theoric import *
 
 data = ox.graph_from_place("LaSalle, Quebec, Canada", network_type="drive")
 data = distance.add_edge_lengths(data)
@@ -24,13 +24,11 @@ options = {
     "pos": position
 }
 
-nx.draw(undirectedNxGraph, **options)
-plt.plot()
-
 G = undirected_nxgraph_to_graph(undirectedNxGraph)
+show_graph(G, False)
 G.eulerize()
 assert G.is_eulerian()
-cycle, weight = find_eulerian_cycle_undirected(G.n, G.edges)
+show_graph(G, False)
+"""cycle, weight = find_eulerian_cycle_undirected(G.n, G.edges)
 print(cycle, weight)
-R = directed_graph_from_cycle(G.n, cycle)
-show_path(R)
+R = directed_graph_from_cycle(G.n, cycle)"""
