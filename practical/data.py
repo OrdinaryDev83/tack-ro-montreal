@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import osmnx.distance as distance
 from theoric import *
 
-data = ox.graph_from_place("LaSalle, Quebec, Canada", network_type="drive")
+"""data = ox.graph_from_place("LaSalle, Quebec, Canada", network_type="drive")
 data = distance.add_edge_lengths(data)
 
 fig, ax = ox.plot_graph(data)
@@ -29,6 +29,10 @@ show_graph(G, False)
 G.eulerize()
 assert G.is_eulerian()
 show_graph(G, False)
-"""cycle, weight = find_eulerian_cycle_undirected(G.n, G.edges)
-print(cycle, weight)
-R = directed_graph_from_cycle(G.n, cycle)"""
+cycle, weight = find_eulerian_cycle_undirected(G.n, G.edges)
+R = directed_graph_from_cycle(G.n, cycle)
+show_graph(R, True)"""
+
+E = edges_from_matrix(10, random_adj_matrix(10, 10))
+G = Graph(10, E, True)
+show_graph("test", G)

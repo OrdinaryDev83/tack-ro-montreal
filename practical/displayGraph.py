@@ -5,22 +5,25 @@ import osmnx as ox
 import networkx as nx
 import matplotlib.pyplot as plt
 
-def show_path(graph):
+import random
+import os
+
+def show_path(name, graph):
     show_graph(graph, True)
 
-def show_graph(graph, colors=False):
+def show_graph(name, graph, colors=False):
     if graph.directed:
-        show_nxgraph(directed_graph_to_nxgraph(graph), colors)
+        show_nxgraph(name, directed_graph_to_nxgraph(graph), colors)
     else:
-        show_nxgraph(undirected_graph_to_nxgraph(graph), colors)
+        show_nxgraph(name, undirected_graph_to_nxgraph(graph), colors)
 
-def show_nxgraph(graph, colors=False):
+def show_nxgraph(name, graph, colors=False):
     options = {
         "with_labels": True,
         "edgecolors": "black",
         "node_color": "white"
     }
-    
+
     if colors:
         clrs = []
         n = len(graph.edges)
@@ -30,5 +33,11 @@ def show_nxgraph(graph, colors=False):
 
         options["edge_color"] = clrs
     
+    print("Plotting graph")
     nx.draw(graph, **options)
+
+    if not os.path.exists("images"):
+        os.mkdir("images")
+
+    plt.savefig("images/" + name + ".png")
     plt.show()
