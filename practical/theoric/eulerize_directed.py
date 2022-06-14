@@ -76,7 +76,7 @@ def adj_list(n, edges):
         return succ
 
 # Hierholzer's implementation
-def find_eulerian_cycle_directed(n, edges):
+def find_eulerian_cycle_directed(n, edges, startPoint):
     adj = adj_list(n, edges)
 
     # needs to be connected and odd vertices 0 or 2
@@ -91,8 +91,8 @@ def find_eulerian_cycle_directed(n, edges):
         nbEdges[i] = len(adj[i])
 
     circuit = []
-    currentPath = [0]
-    currentVertex = 0
+    currentPath = [startPoint]
+    currentVertex = startPoint
 
     while currentPath:
         if nbEdges[currentVertex]:
@@ -107,4 +107,7 @@ def find_eulerian_cycle_directed(n, edges):
 
     circuit.reverse()
     circuit.pop()
-    return circuit
+    weight = 0
+    for i in range(len(circuit)):
+        weight += edges[circuit[i]][2]
+    return circuit, weight

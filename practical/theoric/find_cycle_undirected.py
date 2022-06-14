@@ -17,14 +17,14 @@ def convertListToAdjaList(n, edges):
 # @param edges The list of edges in the graph, as a list
 # @return The found eulerian cycle in the graph
 
-def find_eulerian_cycle_undirected(m, edges):
+def find_eulerian_cycle_undirected(m, edges, startPoint):
     cycle = []
     E = len(edges)
     if E == 0:
         return cycle, 0
 
     totalWeight = 0 # the starting point is added at the end anyway
-    X = edges[0][0]
+    X = startPoint
     cycle.append(X)
     index_to_insert = 1
     edges_used = [False] * E
