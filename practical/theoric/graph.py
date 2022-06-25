@@ -7,6 +7,7 @@ class Graph:
         self.n = n
         self.directed = directed
         self.edges = edges
+        self.snow = {}
 
     def adj_list(self):
         succ = [[] for a in range(self.n)]
@@ -19,9 +20,9 @@ class Graph:
     def adj_matrix(self):
         M = np.full((self.n, self.n), 0, dtype=object)
         for (i, j, w) in self.edges:
-            M[i, j] = w
+            M[i, j] = (w, self.snow[(i, j)])
             if not(self.directed):
-                M[j, i] = w
+                M[j, i] = (w, self.snow[(i, j)])
         return M
 
     def eulerize(self):
@@ -36,11 +37,33 @@ class Graph:
         else:
             return is_eulerian_undirected(self.n, self.edges)
 
-    def find_euler_path(self):
-        if self.directed:
-            return find_eulerian_cycle_directed(self.n, self.edges)
-        else:
-            return find_eulerian_cycle_undirected(self.n, self.edges)
+    def add_random_snow(self):
+        for edge in self.edges:
+            s = np.random.normal((2.5 + 15.0) / 2.0, 3.189) # 95% de chance d'avoir de la neige
+            if s > 50:
+                s = 50
+            elif s < 0:
+                s = 0
+            self.snow[edge] = s
+
+    def remove_unsnowy(self):
+        if self.directed == False:
+            bridges = find_bridges_undirected(self.adj_list())
+            if bridges == None:
+                return
+            for b in bridges:
+                if b == None:
+                    continue
+                b1, b2 = b
+                if ((b1, b2) in self.snow and self.snow[(b1, b2)] < 2.5):
+                    continue
+                elif ((b2, b1) in self.snow and self.snow[(b2, b1)] < 2.5):
+                    continue
+
+                w = 0
+                for (a, b, w) in self.edges:
+                    if (a == b1 and a == b2) or (a == b2 and a == b1):
+                        self.edges.remove((a, b, w))
     
 def directed_graph_from_cycle(n, cycle):
     edges = []

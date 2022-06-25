@@ -1,0 +1,2 @@
+distance : 2929.08km
+snow : 0.0m3

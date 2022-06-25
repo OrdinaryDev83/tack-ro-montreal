@@ -10,13 +10,6 @@ def convertListToAdjaList(n, edges):
         L[edge[1]].append(edge[0])  # Non-Directed hypothesis
     return L
 
-# FIND EULERIAN CYCLE
-
-# @brief Find an eulerian cycle in an eulerian graph
-# @param n Number of nodes in the graph
-# @param edges The list of edges in the graph, as a list
-# @return The found eulerian cycle in the graph
-
 def find_eulerian_cycle_undirected(m, edges, startPoint):
     cycle = []
     E = len(edges)
@@ -58,12 +51,6 @@ def find_eulerian_cycle_undirected(m, edges, startPoint):
     return cycle, totalWeight
 
 
-# @brief Find a neighbor node accessible through the edges_used list
-# @param L Adjacent list of edges
-# @param v The current vertex
-# @param edges The list of edges
-# @param Array containing bool values to know if an edge has been already visited
-# @return Return the vertex to visit or -1
 def visit_unused_edge(L, v, edges, edges_used):
     for i in range(len(L[v])):
         if find_list((v, L[v][i]), edges, edges_used) == -1:
@@ -71,12 +58,6 @@ def visit_unused_edge(L, v, edges, edges_used):
         return L[v][i]
     return -1
 
-
-# @brief Returns the index of the given edge if it's in the list and unvisited
-# @param edge The edge to find in the list
-# @param L List of edges
-# @param Array containing bool values to know if an edge has been already visited
-# @return Return the index of the edge found or -1
 
 def find_list(edge, L, edges_used):
     for i in range(len(L)):
@@ -86,12 +67,6 @@ def find_list(edge, L, edges_used):
             return i
     return -1
 
-
-# @brief Check if a nodes still has edges to visited
-# @param node The node to check
-# @param edges The list of edges in the graph, in a list
-# @param Array containing bool values to know if an edge has been already visited
-# @return Return True if there is more edges to visit
 
 def has_unvisited_edges(node, edges, edges_used):
     for i in range(len(edges)):

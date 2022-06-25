@@ -107,7 +107,13 @@ def find_eulerian_cycle_directed(n, edges, startPoint):
 
     circuit.reverse()
     circuit.pop()
-    weight = 0
-    for i in range(len(circuit)):
-        weight += edges[circuit[i]][2]
+    weight = {}
+    for i in range(1, len(circuit)):
+        w_ = 0
+        for (a, b, w) in edges:
+            if a == circuit[i - 1] and b == circuit[i]:
+                w_ = w
+                break
+        weight[(circuit[i - 1], circuit[i])] = w_
+
     return circuit, weight

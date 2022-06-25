@@ -1,0 +1,2 @@
+distance : 1.37km
+snow : 661695.14m3

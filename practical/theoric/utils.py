@@ -1,4 +1,5 @@
 from theoric.graph import *
+import math
 
 def odd_vertices(n, edges):
     deg = [0] * n
@@ -41,3 +42,31 @@ def is_edge_connected(n, edges):
         if succ[a] and not touched[a]:
             return False
     return True
+
+def find_bridges_undirected(adj_list):
+    dfs_counter = 0
+    n = len(adj_list) 
+    dfs_ord = [math.inf] * n
+    low_link = [math.inf] * n
+    visited_vertices = [False] * n
+    parent_vertex = [-1] * n
+    total = []
+    for i in range(n):
+        if visited_vertices[i] == False:
+            dfs(i, total, visited_vertices, parent_vertex, low_link, dfs_ord, dfs_counter, adj_list)
+    return total
+
+def dfs(u, total, visited_vertices, parent_vertex, low_link, dfs_ord, dfs_counter, adj_list):
+    visited_vertices[u] = True
+    dfs_ord[u] = dfs_counter
+    low_link[u] = dfs_counter
+    dfs_counter += 1
+    for v in adj_list[u]:
+        if visited_vertices[v] == False:
+            parent_vertex[v] = u
+            dfs(v, total, visited_vertices, parent_vertex, low_link, dfs_ord, dfs_counter, adj_list)
+            low_link[u] = min(low_link[u], low_link[v])
+            if low_link[v] > dfs_ord[u]:
+                total.append((u, v))
+        elif v!= parent_vertex[u]:
+            low_link[u] = min(low_link[u], dfs_ord[v])
