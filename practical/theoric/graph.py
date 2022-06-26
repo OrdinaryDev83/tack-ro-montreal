@@ -47,6 +47,7 @@ class Graph:
             self.snow[edge] = s
 
     def remove_unsnowy(self):
+        i = 0
         if self.directed == False:
             bridges = find_bridges_undirected(self.adj_list())
             if bridges == None:
@@ -64,6 +65,8 @@ class Graph:
                 for (a, b, w) in self.edges:
                     if (a == b1 and a == b2) or (a == b2 and a == b1):
                         self.edges.remove((a, b, w))
+                        i += 1
+        print("Removed " + str(i))
     
 def directed_graph_from_cycle(n, cycle):
     edges = []

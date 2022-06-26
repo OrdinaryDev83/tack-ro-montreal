@@ -1,4 +1,6 @@
 from data import *
 
-process_directed("LaSalle")
-process_undirected("LaSalle")
+data = getData("LaSalle")
+
+process_directed("LaSalle", data)
+process_undirected("LaSalle", data)

@@ -16,7 +16,6 @@ def find_eulerian_cycle_undirected(m, edges, startPoint):
     if E == 0:
         return cycle, 0
 
-    totalWeight = 0 # the starting point is added at the end anyway
     X = startPoint
     cycle.append(X)
     index_to_insert = 1
@@ -29,7 +28,6 @@ def find_eulerian_cycle_undirected(m, edges, startPoint):
         while True:
             current_v = visit_unused_edge(L, current_v, edges, edges_used)
             cycle.insert(index_to_insert, current_v)
-            totalWeight += 1
             index_to_insert += 1
             if current_v == X:
                 break
@@ -48,7 +46,7 @@ def find_eulerian_cycle_undirected(m, edges, startPoint):
         # until every edge is visited
 
     cycle.pop()
-    return cycle, totalWeight
+    return cycle
 
 
 def visit_unused_edge(L, v, edges, edges_used):
