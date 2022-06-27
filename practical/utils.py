@@ -9,7 +9,7 @@ def random_adj_matrix(n, maxEdge):
     while i < maxEdge:
         x = np.random.randint(0, n)
         y = np.random.randint(0, n)
-        if x != y and (x, y) not in dict:
+        if x != y:
             M[x, y] = 1
             i += 1
             dict[(x, y)] = 1

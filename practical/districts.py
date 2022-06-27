@@ -3,7 +3,7 @@ districts = [
     "Ahuntsic-Cartierville",
     "Anjou",
     "Côte-des-Neiges-Notre-Dame-de-Grâce",
-    "Lachine",
+    "Borough of Lachine", # obligatoire sinon il trouve pas le district
     "LaSalle",
     "Le Plateau-Mont-Royal",
     "Le Sud-Ouest",

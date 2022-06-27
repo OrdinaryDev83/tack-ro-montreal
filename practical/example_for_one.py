@@ -1,6 +1,9 @@
 from data import *
 
-data = getData("LaSalle")
+data = getData("Anjou")
 
-process_directed("LaSalle", data)
-process_undirected("LaSalle", data)
+snow = process_undirected("Anjou", data)
+
+#############################################################################################
+
+process_directed("Anjou", data, snow)

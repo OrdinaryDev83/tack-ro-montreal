@@ -46,26 +46,34 @@ class Graph:
                 s = 0
             self.snow[edge] = s
 
+    # osmnx already adds the weights so it's useless here
+    # but if we happened not have osmnx it's good
+    def add_snow_and_weights(self, edges, snow):
+        s = {}
+        for (a, b, w) in snow.keys():
+            p = snow[(a, b, w)]
+
+            key = find_alternate_key(edges, (a, b))
+            if key != None:
+                s[key] = p / 2
+                s[(a, b, w)] = p / 2
+            else:
+                s[(a, b, w)] = p
+        self.snow = s
+
     def remove_unsnowy(self):
         i = 0
         if self.directed == False:
             bridges = find_bridges_undirected(self.adj_list())
             if bridges == None:
                 return
-            for b in bridges:
-                if b == None:
-                    continue
-                b1, b2 = b
-                if ((b1, b2) in self.snow and self.snow[(b1, b2)] < 2.5):
-                    continue
-                elif ((b2, b1) in self.snow and self.snow[(b2, b1)] < 2.5):
+            for (a, b, w) in self.snow.keys():
+                if ((a, b, w) in self.snow and self.snow[(a, b, w)] >= 2.5):
                     continue
 
-                w = 0
-                for (a, b, w) in self.edges:
-                    if (a == b1 and a == b2) or (a == b2 and a == b1):
-                        self.edges.remove((a, b, w))
-                        i += 1
+                if (a, b) not in bridges and (b, a) not in bridges:
+                    self.edges.remove((a, b, w))
+                    i += 1
         print("Removed " + str(i))
     
 def directed_graph_from_cycle(n, cycle):
@@ -73,3 +81,9 @@ def directed_graph_from_cycle(n, cycle):
     for i in range(len(cycle) - 1):
         edges.append((cycle[i], cycle[i + 1], 1))
     return Graph(n, edges, True)
+
+def find_alternate_key(d, value):
+    for (a, b, c) in d:
+        if a == value[1] and b == value[0]:
+            return (a, b, c)
+    return None

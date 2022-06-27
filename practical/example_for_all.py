@@ -1,21 +1,18 @@
 from data import *
 from districts import *
-import threading
+import matplotlib
 
-def process(district):
+# MATPLOTLIB IS NOT THREAD SAFE
+
+matplotlib.use("Agg")
+
+def subprocess(district):
     data = getData(district)
 
-    process_directed(district, data)
-    process_undirected(district, data)
+    snow = process_undirected(district, data)
+    process_directed(district, data, snow)
 
-threads = []
-for district in districts:
-    threads.append(threading.Thread(target=process, args=(district,)))
-
-for thread in threads:
-    thread.start()
-
-for thread in threads:
-    thread.join()
+for dis in districts:
+    subprocess(dis)
 
 print("Finished")

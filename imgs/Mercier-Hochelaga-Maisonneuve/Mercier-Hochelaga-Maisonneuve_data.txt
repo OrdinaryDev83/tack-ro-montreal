@@ -1,0 +1,5 @@
+distance : 380.24km
+snow : 1631.59m3
+fuel spent : 11407.16L
+fuel cost : 10266.45$
+time : 76:2:51

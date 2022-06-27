@@ -18,7 +18,8 @@ def getData(district):
 def plot_data(name, data):
     plt.figure()
     path = "imgs/" + name + "/" + name + "_view.png"
-    # fig, ax = ox.plot_graph(data, save=True, filepath=path, show=False, dpi=1000)
+    fig, ax = ox.plot_graph(data, save=True, filepath=path, show=False, dpi=1000)
+    plt.close()
 
 # extract the directed nxgraph from the data
 def extract_directed_graph(data):
@@ -42,7 +43,7 @@ def get_position(graph):
 # plot a nxgraph
 def plot_graph(name, subname, graph, position):
     options = {
-    "node_size": 2,
+    "node_size": 0.3,
     "arrowsize": 3,
     "min_source_margin": 1,
     "pos": position
@@ -52,11 +53,12 @@ def plot_graph(name, subname, graph, position):
     nx.draw(graph, **options, width=0.2)
     fig.set_facecolor("#FFFFFF")
     plt.savefig("imgs/" + name + "/" + name + "_" + subname + ".png", dpi=1000)
+    plt.close()
 
 # plot a nxgraph containing snow heights
 def plot_snow(name, subname, G, graph, position):
     options = {
-    "node_size": 2,
+    "node_size": 0.3,
     "arrowsize": 3,
     "min_source_margin": 1,
     "pos": position
@@ -65,24 +67,30 @@ def plot_snow(name, subname, G, graph, position):
     edge_color = []
     i = 0
     for edge in G.edges:
-        snow = G.snow[edge]
+        snow = 0
+        alpha = 1
+        if edge in G.snow:
+            snow = G.snow[edge]
+        else:
+            alpha = 0
         edge_clr = snow / 15
-        if edge_clr > 1.0:
+        if edge_clr > 1.0: 
             edge_clr = 1.0
-        edge_color.append((edge_clr, edge_clr, edge_clr))
+        edge_color.append((edge_clr, edge_clr, edge_clr, alpha))
         i += 1
 
     fig = plt.figure()
     nx.draw(graph, edge_color=edge_color, width=1, **options)
     fig.set_facecolor("#00000F")
     plt.savefig("imgs/" + name + "/" + name + "_" + subname + "_snow.png", dpi=1000)
+    plt.close()
 
 # plot a cycle graph (directed graph with edges contained in the original graph, directed or not)
-def plot_cycle(name, subName, originalNxGraph, euleurizedG, G_cycle, G_nodes):
+def plot_cycle(name, subName, originalNxGraph, cycle, G_cycle, G_nodes):
     options = {
-    "node_size": 2,
-    "arrowsize": 3,
-    "min_source_margin": 1,
+        "node_size": 0.3,
+        "arrowsize": 3,
+        "min_source_margin": 1,
     }
 
     positionsx = nx.get_node_attributes(originalNxGraph, "x")
@@ -95,11 +103,12 @@ def plot_cycle(name, subName, originalNxGraph, euleurizedG, G_cycle, G_nodes):
         org_position[pos] = (positionsx[pos], positionsy[pos])
 
     labels = {}
-
-    """for i in range(1, len(cycle)):
-    a = cycle[i - 1]
-    b = cycle[i]
-    labels[(a, b)] = str(i)"""
+    for i in range(0, len(cycle)):
+        key = cycle[i]
+        if key in labels:
+            labels[key] += "\n" + str(i)
+        else:
+            labels[key] = str(i)
 
     plt.figure()
     nx.draw(originalNxGraph, pos=org_position, **options, width=0.2)
@@ -114,9 +123,9 @@ def plot_cycle(name, subName, originalNxGraph, euleurizedG, G_cycle, G_nodes):
 
     X = directed_graph_to_nxgraph(G_cycle)
 
-    nx.draw(X, pos=position, **options, width=0.2)
-    nx.draw_networkx_labels(euleurizedG, pos=position, labels=labels)
+    nx.draw(X, pos=position, **options, width=0.2, with_labels=True, labels=labels, font_size=1)
     plt.savefig("imgs/" + name + "/" + name + "_" + subName + ".png", dpi=1000)
+    plt.close()
 
 def hours_to_HMS(h):
     hours = math.floor(h)
@@ -141,12 +150,12 @@ def save_data(name, cycle, snow):
 
     # avg size of the roads
     avg_road_width = 5.0
-    # avg fuel consumption per km in L for deneigeuses
-    avg_fuel_consumption_per_km = 30.0
+    # avg fuel consumption per km in h for deneigeuses
+    avg_fuel_consumption_per_h = 30.0
     # avg fuel cost in $
-    avg_fuel_cost = 0.9
+    avg_fuel_cost = 1.730
     # avg deneigeuse speed in km/h
-    avg_speed = 5.0
+    avg_speed = 25.0
 
     for i in range(1, len(cycle)):
         a = cycle[i - 1]
@@ -163,19 +172,21 @@ def save_data(name, cycle, snow):
         total_distance_km += (weight / 1000)
 
     total_snow_volume /= 100
+    t = total_distance_km / avg_speed
+    s = avg_fuel_consumption_per_h * t
 
     lines = [
         "distance : " + str(round(total_distance_km, 2)) + "km\n",
         "snow : " + str(round(total_snow_volume, 2)) + "m3\n",
-        "fuel spent : " + str(round(total_distance_km * avg_fuel_consumption_per_km, 2)) + "L\n"
-        "fuel cost : " + str(round(total_distance_km * avg_fuel_consumption_per_km * avg_fuel_cost, 2)) + "$\n"
-        "time : " + hours_to_HMS(total_distance_km / avg_speed)
+        "fuel spent : " + str(round(s, 2)) + "L\n"
+        "fuel cost : " + str(round(s * avg_fuel_cost, 2)) + "$\n"
+        "time : " + hours_to_HMS(t)
         ]
     with open("imgs/" + name + "/" + name + "_data.txt", 'w') as f:
         f.writelines(lines)
 
 # plot and process the data in a directed way
-def process_directed(name, data):
+def process_directed(name, data, snow):
     if not(os.path.isdir("imgs")):
         os.mkdir("imgs")
     if not(os.path.isdir("imgs/" + name)):
@@ -196,19 +207,16 @@ def process_directed(name, data):
     # convert it to our graph class, keeping the old node IDs
     G, G_nodes = directed_nxgraph_to_graph(directedNxGraph)
 
-    # snow height system
+    # snow height + weights system
 
-    print("Adding snow")
-    G.add_random_snow() # according to a gaussian curve distribution of the snow height
+    print("Adding the snow and lenghts the drone saw")
+    G.add_snow_and_weights(G.edges, snow) # according to a gaussian curve distribution of the snow height
     plot_snow(name, "directed", G, directedNxGraph, position)
-    print("Removing unsnowy non bridges roads")
-    G.remove_unsnowy() # remove unsnowy and not "bridges" roads
 
     # end snow
     print("Is the graph Eulerian:", G.is_eulerian(), "/", "Edges count:", len(G.edges))
     # eulerize the graph
     G.eulerize()
-
 
     print("Is the graph Eulerian:", G.is_eulerian(), "/", "Edges count:", len(G.edges))
 
@@ -219,11 +227,8 @@ def process_directed(name, data):
     print("Finding a cycle")
     G_cycle_directed = directed_graph_from_cycle(G.n, cycle_directed)
 
-    # convert it back to a nxgraph to plot it
-    E = directed_graph_to_nxgraph(G)
-
     # plot the cycle graph
-    plot_cycle(name, "directed_cycle", directedNxGraph, E, G_cycle_directed, G_nodes)
+    plot_cycle(name, "directed_cycle", directedNxGraph, cycle_directed, G_cycle_directed, G_nodes)
     save_data(name, cycle_directed, G.snow)
 
 # plot and process the data in a undirected way
@@ -259,24 +264,24 @@ def process_undirected(name, data):
     # end snow
     print("Is the graph Eulerian:", G.is_eulerian(), "/", "Edges count:", len(G.edges))
     # eulerize the graph
-    G.eulerize()
 
     weight = 0
     for edge in G.edges:
         weight += edge[2]
     print("Total street length", str(round(weight / 1000.0, 2)) + "km")
+    G.eulerize()
 
     print("Is the graph Eulerian:", G.is_eulerian(), "/", "Edges count:", len(G.edges))
 
     # find an eulerian cycle in a directed graph
     print("Finding a cycle")
-    cycle_directed = find_eulerian_cycle_undirected(G.n, G.edges, 0)
+    cycle_undirected = find_eulerian_cycle_undirected(G.n, G.edges, 0)
 
     # convert the node list to a directed graph (cycle graph)
-    G_cycle_directed = directed_graph_from_cycle(G.n, cycle_directed)
-
-    # convert it back to a nxgraph to plot it
-    E = directed_graph_to_nxgraph(G)
+    G_cycle_undirected = directed_graph_from_cycle(G.n, cycle_undirected)
 
     # plot the cycle graph
-    plot_cycle(name, "undirected_cycle", undirectedNxGraph, E, G_cycle_directed, G_nodes)
+    plot_cycle(name, "undirected_cycle", undirectedNxGraph, cycle_undirected, G_cycle_undirected, G_nodes)
+
+    # return the snow seen by the drone + street lengths
+    return G.snow
