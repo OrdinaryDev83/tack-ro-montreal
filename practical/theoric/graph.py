@@ -26,10 +26,12 @@ class Graph:
         return M
 
     def eulerize(self):
+        edges_count = len(self.edges)
         if self.directed:
             self.edges = eulerize_directed(self.n, self.edges)
         else:
             self.edges = eulerize_undirected(self.n, self.edges)
+        print("Eulerized " + str(edges_count) + " edges to " + str(len(self.edges)))
     
     def is_eulerian(self):
         if self.directed:
