@@ -1,9 +1,8 @@
-from turtle import pos
-from utils import *
+from practical.utils import *
 import matplotlib.pyplot as plt
 import osmnx.distance as distance
-from theoric import *
 import os.path
+import math
 
 # comparer random temps + n + point de départ + calculer complexite des algo + chercher des temps 
 # notebook, push cele, refaire la partie théorique, faire plein de tests 
