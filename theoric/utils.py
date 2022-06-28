@@ -36,7 +36,6 @@ def random_adj_matrix(nodes_number, edges_number):
             y = np.random.randint(0, x)
         intersections[y] += 1
         intersections[x] += 1
-        M_undirected[x, y] = 1
         M_undirected[y, x] = 1
         M_directed[x, y] = 1
         if (np.random.random() < 0.6):
@@ -46,9 +45,11 @@ def random_adj_matrix(nodes_number, edges_number):
     while i < edges_number:
         x = np.random.randint(0, nodes_number)
         y = np.random.randint(0, nodes_number)
-        if x != y and M_undirected[x, y] == 0 and intersections[x] < 6 and intersections[y] < 6:
-            M_undirected[x, y] = 1
-            M_undirected[y, x] = 1
+        if x != y and (M_undirected[x, y] == 0 or M_undirected[y, x] == 0) and intersections[x] < 6 and intersections[y] < 6:
+            if (x < y):
+                M_undirected[y, x] = 1
+            else:
+                M_undirected[x, y] = 1
             M_directed[x, y] = 1
             if (np.random.random() < 0.6):
                 M_directed[y, x] = 1
