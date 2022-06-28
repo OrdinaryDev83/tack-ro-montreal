@@ -19,13 +19,7 @@ g0=(4, [(0,1, 1),(1,2, 1),(2,3, 1),(3,0, 1)])
 assert is_eulerian_cycle(*g0, find_eulerian_cycle_directed(*g0,0))
 
 g1=(4, [(2,0, 1),(2,1, 1),(3,1, 1),(1,2, 1),(0,2, 1),(2,3, 1),(3,0, 1),(3,2, 1),(0,1, 1),(0,0, 1)])
-print(find_eulerian_cycle_directed(*g1,0))
-g = Graph(g1[0], g1[1], True)
-nxg = directed_graph_to_nxgraph(g)
-show_graph(nxg)
-
-exit()
-assert is_eulerian_cycle(*g1, find_eulerian_cycle_directed(*g1,0))
+assert is_eulerian_cycle(*g1, find_eulerian_cycle_undirected(*g1,0))
 	
 g0=(4, [(1,2, 1),(2,3, 1),(3,0, 1),(0,1, 1)])
 assert is_eulerian_cycle(*g0, find_eulerian_cycle_directed(*g0,0))

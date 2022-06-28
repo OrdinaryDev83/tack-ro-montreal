@@ -3,6 +3,87 @@ import math
 from matplotlib import pyplot as plt
 import networkx as nx
 
+def is_connected(n, edges):
+    if n == 0:
+        return True
+    # Convert to adjacency list
+    succ = [[] for a in range(n)]
+    for (a,b,w) in edges:
+        succ[a].append(b)
+        succ[b].append(a)
+    # DFS over the graph
+    touched = [False] * n
+    touched[0] = True
+    todo = [0]
+    while todo:
+        s = todo.pop()
+        for d in succ[s]:
+            if not touched[d]:
+                touched[d] = True
+                todo.append(d)
+    return sum(touched) == n
+
+def random_adj_matrix_directed(nodes_number, edges_number):
+    M = np.zeros((nodes_number, nodes_number))
+    i = 0
+    dict = {}
+    while i < edges_number:
+        x = np.random.randint(0, nodes_number)
+        y = np.random.randint(0, nodes_number)
+        if x != y and M[x, y] == 0:
+            M[x, y] = 1
+            i += 1
+    return M
+
+def random_edges_directed(nodes_number, edges_number):
+    M = random_adj_matrix_directed(nodes_number, edges_number)
+    e = []
+    for i in range(nodes_number):
+        for j in range(nodes_number):
+            if M[i, j] != 0:
+                e.append((i, j, M[i, j]))
+    return e
+
+def random_adj_matrix_undirected(nodes_number, edges_number):
+    M = np.zeros((nodes_number, nodes_number))
+    i = 0
+    dict = {}
+    while i < edges_number:
+        x = np.random.randint(0, nodes_number)
+        y = np.random.randint(0, nodes_number)
+        if x != y and M[x, y] == 0 and M[y, x] == 0:
+            M[x, y] = 1
+            M[y, x] = 1
+            i += 1
+    return M
+
+def random_edges_undirected(nodes_number, edges_number):
+    M = random_adj_matrix_undirected(nodes_number, edges_number)
+    e = []
+    for i in range(nodes_number):
+        for j in range(nodes_number):
+            if M[i, j] != 0:
+                e.append((i, j, M[i, j]))
+    return e
+
+def random_connected_directed_graph(nodes_number, edges_number):
+    try_counter = 0
+    graph = random_edges_directed(nodes_number, edges_number)
+    while not is_connected(nodes_number, graph):
+        graph = random_edges_directed(nodes_number, edges_number)
+        try_counter += 1
+    print("Try counter: " + str(try_counter) + " (nodes_number: " + str(nodes_number) + ", edges_number: " + str(edges_number) + ")")
+    return graph
+
+def random_connected_undirected_graph(nodes_number, edges_number):
+    try_counter = 0
+    graph = random_edges_undirected(nodes_number, edges_number)
+    while not is_connected(nodes_number, graph):
+        graph = random_edges_undirected(nodes_number, edges_number)
+        try_counter += 1
+    print("Try counter: " + str(try_counter) + " (nodes_number: " + str(nodes_number) + ", edges_number: " + str(edges_number) + ")")
+    return graph
+
 def show_graph(G):    
     labels = {}
     for i in range(len(G.nodes)):
@@ -10,7 +91,9 @@ def show_graph(G):
 
     pos = nx.spring_layout(G)
     nx.draw(G, pos, with_labels=True, labels=labels)
+    print("1")
     plt.show()
+    print("2")
     
     
 def directed_graph_to_nxgraph(g):
