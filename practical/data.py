@@ -207,6 +207,12 @@ def process_directed(name, data, snow):
     # convert it to our graph class, keeping the old node IDs
     G, G_nodes = directed_nxgraph_to_graph(directedNxGraph)
 
+    l_1 = G.n
+    l_2 = 0
+    for edge in G.edges:
+        l_2 += 1
+    print(l_1, l_2)
+
     # snow height + weights system
 
     print("Adding the snow and lenghts the drone saw")
