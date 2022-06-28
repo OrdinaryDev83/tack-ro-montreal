@@ -252,6 +252,8 @@ def process_undirected(name, data):
 
     # convert it to our graph class, keeping the old node IDs
     G, G_nodes = undirected_nxgraph_to_graph(undirectedNxGraph)
+    
+    print("edges :", len(G.edges), " nodes :", len(G_nodes), " and fraction is :", len(G.edges) / len(G_nodes))
 
     # snow height system
 

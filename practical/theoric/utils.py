@@ -1,5 +1,94 @@
-from theoric.graph import *
+from graph import *
 import math
+from matplotlib import pyplot as plt
+import networkx as nx
+
+def show_graph(G):    
+    labels = {}
+    for i in range(len(G.nodes)):
+        labels[i] = str(i)
+
+    pos = nx.spring_layout(G)
+    nx.draw(G, pos, with_labels=True, labels=labels)
+    plt.show()
+    
+    
+def directed_graph_to_nxgraph(g):
+    G = nx.DiGraph()
+
+    for i in range(g.n):
+        G.add_node(i)
+    
+    for (a, b, w) in g.edges:
+        G.add_edge(a, b, weight=w)
+    return G
+
+def directed_nxgraph_to_graph(nxGraph):
+    graph = Graph(len(nxGraph), None, False)
+    graph.edges = []
+    
+    nodes = {}
+    index = 0
+    for node in nxGraph.nodes:
+        nodes[node] = index
+        index += 1
+    nodes
+
+    length = nx.get_edge_attributes(nxGraph, "length")
+    
+    edges = []
+    for edge in nxGraph.edges:
+        node1 = nodes[edge[0]]
+        node2 = nodes[edge[1]]
+        weight = length[edge]
+        edges.append((node1, node2, weight))
+    
+    graph.edges = edges
+        
+    return graph, nodes
+
+def undirected_graph_to_nxgraph(graph):
+    nxGraph = nx.Graph()
+    
+    # On ajoute les noeuds
+    for i in range(graph.n):
+        nxGraph.add_node(i)
+
+    # On ajoute les arêtes avec leur poids
+    for edge in graph.edges:
+        nxGraph.add_edge(edge[0], edge[1], weight=edge[2])
+    
+    return nxGraph
+
+# à changer
+def undirected_nxgraph_to_graph(nxGraph):
+    graph = Graph(len(nxGraph.nodes), None, False)
+    graph.edges = []
+    
+    nodes = {}
+    index = 0
+    for node in nxGraph.nodes:
+        nodes[node] = index
+        index += 1
+
+    length = nx.get_edge_attributes(nxGraph, "length")
+    
+    edges = []
+    for edge in nxGraph.edges:
+        node1 = nodes[edge[0]]
+        node2 = nodes[edge[1]]
+        weight = length[edge]
+        edges.append((node1, node2, weight))
+    
+    graph.edges = edges
+        
+    return graph, nodes
+
+def remove_nxgraph_loops(graph):
+    E = [edge for edge in graph.edges]
+    for (a, b, w) in E:
+        if a == b:
+            graph.remove_edge(a, b)
 
 def odd_vertices(n, edges):
     deg = [0] * n
