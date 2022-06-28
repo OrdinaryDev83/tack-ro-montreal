@@ -27,10 +27,26 @@ def random_adj_matrix(nodes_number, edges_number):
     M_directed = np.zeros((nodes_number, nodes_number))
     M_undirected = np.zeros((nodes_number, nodes_number))
     i = 0
+
+    intersections = [0] * nodes_number
+
+    for x in range(1, nodes_number):
+        y = np.random.randint(0, x)
+        while intersections[y] >= 6:
+            y = np.random.randint(0, x)
+        intersections[y] += 1
+        intersections[x] += 1
+        M_undirected[x, y] = 1
+        M_undirected[y, x] = 1
+        M_directed[x, y] = 1
+        if (np.random.random() < 0.6):
+            M_directed[y, x] = 1
+        i += 1
+
     while i < edges_number:
         x = np.random.randint(0, nodes_number)
         y = np.random.randint(0, nodes_number)
-        if x != y and M_undirected[x, y] == 0:
+        if x != y and M_undirected[x, y] == 0 and intersections[x] < 6 and intersections[y] < 6:
             M_undirected[x, y] = 1
             M_undirected[y, x] = 1
             M_directed[x, y] = 1
@@ -51,45 +67,16 @@ def random_edges(nodes_number, edges_number):
                 e_undirected.append((i, j, M_undirected[i, j]))
     return e_directed, e_undirected
 
-def random_adj_matrix_undirected(nodes_number, edges_number):
-    M = np.zeros((nodes_number, nodes_number))
-    i = 0
-    dict = {}
-    while i < edges_number:
-        x = np.random.randint(0, nodes_number)
-        y = np.random.randint(0, nodes_number)
-        if x != y and M[x, y] == 0 and M[y, x] == 0:
-            M[x, y] = 1
-            M[y, x] = 1
-            i += 1
-    return M
-
-def random_edges_undirected(nodes_number, edges_number):
-    M = random_adj_matrix_undirected(nodes_number, edges_number)
-    e = []
-    for i in range(nodes_number):
-        for j in range(nodes_number):
-            if M[i, j] != 0:
-                e.append((i, j, M[i, j]))
-    return e
-
-def random_connected_graph(nodes_number, edges_number):
+def random_connected_graph(nodes_number):
+    edges_number = int((np.random.random() * 0.3 + 1.40)*nodes_number)
     try_counter = 1
     graph_directed, graph_undirected = random_edges(nodes_number, edges_number)
     while not is_connected(nodes_number, graph_undirected):
         graph_directed, graph_undirected = random_edges(nodes_number, edges_number)
         try_counter += 1
+        print("Try #" + str(try_counter))
     print("Try counter: " + str(try_counter) + " (nodes_number: " + str(nodes_number) + ", edges_number: " + str(edges_number) + ")")
     return graph_directed, graph_undirected
-
-def random_connected_undirected_graph(nodes_number, edges_number):
-    try_counter = 0
-    graph = random_edges_undirected(nodes_number, edges_number)
-    while not is_connected(nodes_number, graph):
-        graph = random_edges_undirected(nodes_number, edges_number)
-        try_counter += 1
-    print("Try counter: " + str(try_counter) + " (nodes_number: " + str(nodes_number) + ", edges_number: " + str(edges_number) + ")")
-    return graph
 
 def show_graph(G):    
     labels = {}
@@ -98,9 +85,7 @@ def show_graph(G):
 
     pos = nx.spring_layout(G)
     nx.draw(G, pos, with_labels=True, labels=labels)
-    print("1")
     plt.show()
-    print("2")
     
     
 def directed_graph_to_nxgraph(g):
