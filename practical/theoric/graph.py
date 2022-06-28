@@ -1,6 +1,6 @@
 import numpy as np
-from theoric.eulerize_directed import *
-from theoric.eulerize_undirected import *
+from eulerize_directed import *
+from eulerize_undirected import *
 
 class Graph:
     def __init__(self, n, edges=None, directed=False):
