@@ -40,13 +40,13 @@ def is_eulerian_directed(n, edges):
     return all(balance[i] == 0 for i in range(n))
 
 def eulerize_directed(n, edges):
-    # déjà eulerien
+    # deja eulerien
     if is_eulerian_directed(n, edges):
         return edges
 
     balance = vertices_ratio(n, edges)
 
-    # ils doivent tous être balance
+    # ils doivent tous etre balance
 
     for v in range(len(balance)):
         if balance[v] != 0:
