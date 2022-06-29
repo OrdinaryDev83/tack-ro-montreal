@@ -3,6 +3,9 @@ import matplotlib.pyplot as plt
 import osmnx.distance as distance
 import os.path
 import math
+import random
+from practical.colors import colors
+import time
 
 # comparer random temps + n + point de départ + calculer complexite des algo + chercher des temps 
 # notebook, push cele, refaire la partie théorique, faire plein de tests 
@@ -49,7 +52,7 @@ def plot_graph(name, subname, graph, position):
     }
 
     fig = plt.figure()
-    nx.draw(graph, **options, width=0.2)
+    nx.draw(graph, **options, width=0.4)
     fig.set_facecolor("#FFFFFF")
     plt.savefig("imgs/" + name + "/" + name + "_" + subname + ".png", dpi=1000)
     plt.close()
@@ -79,7 +82,7 @@ def plot_snow(name, subname, G, graph, position):
         i += 1
 
     fig = plt.figure()
-    nx.draw(graph, edge_color=edge_color, width=1, **options)
+    nx.draw(graph, edge_color=edge_color, width=0.7, **options)
     fig.set_facecolor("#00000F")
     plt.savefig("imgs/" + name + "/" + name + "_" + subname + "_snow.png", dpi=1000)
     plt.close()
@@ -122,7 +125,60 @@ def plot_cycle(name, subName, originalNxGraph, cycle, G_cycle, G_nodes):
 
     X = directed_graph_to_nxgraph(G_cycle)
 
-    nx.draw(X, pos=position, **options, width=0.2, with_labels=True, labels=labels, font_size=1)
+    nx.draw(X, pos=position, **options, width=0.4, with_labels=True, labels=labels, font_size=1)
+    plt.savefig("imgs/" + name + "/" + name + "_" + subName + ".png", dpi=1000)
+    plt.close()
+
+def plot_cycle_split(name, subName, originalNxGraph, cycle, G_cycle, G_nodes, plows):
+    options = {
+        "node_size": 0.3,
+        "arrowsize": 3,
+        "min_source_margin": 1,
+    }
+
+    positionsx = nx.get_node_attributes(originalNxGraph, "x")
+    positionsy = nx.get_node_attributes(originalNxGraph, "y")
+    position = {}
+    org_position = {}
+    for pos in positionsx:
+        a = G_nodes[pos]
+        position[a] = (positionsx[pos], positionsy[pos])
+        org_position[pos] = (positionsx[pos], positionsy[pos])
+
+    labels = {}
+    for i in range(0, len(cycle)):
+        key = cycle[i]
+        if key in labels:
+            labels[key] += "\n" + str(i)
+        else:
+            labels[key] = str(i)
+
+    plt.figure()
+    nx.draw(originalNxGraph, pos=org_position, **options, width=0.2)
+
+    edge_color = []
+    i = 0
+    r = random.uniform(0, 1)
+    g = random.uniform(0, 1)
+    b = random.uniform(0, 1)
+
+    steps_per_plow = round(len(G_cycle.edges) / plows)
+
+    step = 0
+    n = 0
+    for edge in G_cycle.edges:
+        color = list(colors.values())[n]
+        edge_color.append(color)
+        i += 1
+        if step > steps_per_plow:
+            step = 0
+            n += 1
+        step += 1
+    options["edge_color"] = edge_color
+
+    X = directed_graph_to_nxgraph(G_cycle)
+
+    nx.draw(X, pos=position, **options, width=0.4, with_labels=True, labels=labels, font_size=1)
     plt.savefig("imgs/" + name + "/" + name + "_" + subName + ".png", dpi=1000)
     plt.close()
 
@@ -143,7 +199,7 @@ def find_key(d, value):
     return None
 
 # save the calculated data in a file
-def save_data(name, cycle, snow):
+def save_data(name, cycle, snow, plows):
     total_snow_volume = 0
     total_distance_km = 0
 
@@ -171,7 +227,7 @@ def save_data(name, cycle, snow):
         total_distance_km += (weight / 1000)
 
     total_snow_volume /= 100
-    t = total_distance_km / avg_speed
+    t = (total_distance_km / avg_speed)
     s = avg_fuel_consumption_per_h * t
 
     lines = [
@@ -179,13 +235,13 @@ def save_data(name, cycle, snow):
         "snow : " + str(round(total_snow_volume, 2)) + "m3\n",
         "fuel spent : " + str(round(s, 2)) + "L\n"
         "fuel cost : " + str(round(s * avg_fuel_cost, 2)) + "$\n"
-        "time : " + hours_to_HMS(t)
+        "time : " + hours_to_HMS(t / plows)
         ]
     with open("imgs/" + name + "/" + name + "_data.txt", 'w') as f:
         f.writelines(lines)
 
 # plot and process the data in a directed way
-def process_directed(name, data, snow):
+def process_directed(name, data, snow, snow_plow_per_district):
     if not(os.path.isdir("imgs")):
         os.mkdir("imgs")
     if not(os.path.isdir("imgs/" + name)):
@@ -226,15 +282,17 @@ def process_directed(name, data, snow):
     print("Is the graph Eulerian:", G.is_eulerian(), "/", "Edges count:", len(G.edges))
 
     # find an eulerian cycle in a directed graph
+    print("Finding a cycle")
     cycle_directed = find_eulerian_cycle_directed(G.n, G.edges, 0)
 
     # convert the node list to a directed graph (cycle graph)
-    print("Finding a cycle")
     G_cycle_directed = directed_graph_from_cycle(G.n, cycle_directed)
 
+    print("Plotting the cycle")
     # plot the cycle graph
     plot_cycle(name, "directed_cycle", directedNxGraph, cycle_directed, G_cycle_directed, G_nodes)
-    save_data(name, cycle_directed, G.snow)
+    plot_cycle_split(name, "directed_cycle_split", directedNxGraph, cycle_directed, G_cycle_directed, G_nodes, snow_plow_per_district)
+    save_data(name, cycle_directed, G.snow, snow_plow_per_district)
 
 # plot and process the data in a undirected way
 def process_undirected(name, data):
@@ -287,6 +345,7 @@ def process_undirected(name, data):
     # convert the node list to a directed graph (cycle graph)
     G_cycle_undirected = directed_graph_from_cycle(G.n, cycle_undirected)
 
+    print("Plotting the cycle")
     # plot the cycle graph
     plot_cycle(name, "undirected_cycle", undirectedNxGraph, cycle_undirected, G_cycle_undirected, G_nodes)
 
