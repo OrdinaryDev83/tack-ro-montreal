@@ -1,6 +1,5 @@
 from theoric.utils import *
 from time import time
-import threading
 
 
 res_list = []
@@ -28,17 +27,17 @@ def execute():
     great_list.append([500])
     great_list.append([600])
     great_list.append([700])
-    great_list.append([800])
-    great_list.append([900])
-    great_list.append([1000])
-    great_list.append([2000])
-    great_list.append([3000])
-    great_list.append([4000])
-    great_list.append([5000])
-    great_list.append([6000])
-    great_list.append([7000])
-    great_list.append([8000])
-    great_list.append([9000])
+    #great_list.append([800])
+    #great_list.append([900])
+    #great_list.append([1000])
+    #great_list.append([2000])
+    #great_list.append([3000])
+    #great_list.append([4000])
+    #great_list.append([5000])
+    #great_list.append([6000])
+    #great_list.append([7000])
+    #great_list.append([8000])
+    #great_list.append([9000])
 
 
     for nodes_numbers_list in great_list:
@@ -77,7 +76,7 @@ def execute():
             eulerizing_time_list_undirected.append(t1 - t0)
             undir_euler_time_great_list.append(t1 - t0)
             undir_graph_great_list.append(undir_graph_list[i])
-            print("undirected graph: ", undir_graph_list[i].edges)
+            #print("undirected graph: ", undir_graph_list[i].edges)
 
         for i in range(len(dir_graph_list)):
             t0 = time()
@@ -88,7 +87,7 @@ def execute():
             eulerizing_time_list_directed.append(t1 - t0)
             dir_euler_time_great_list.append(t1 - t0)
             dir_graph_great_list.append(dir_graph_list[i])
-            print("directed graph: ", dir_graph_list[i].edges)
+            #print("directed graph: ", dir_graph_list[i].edges)
 
 
         eulerian_cycle_time_list_directed = []
@@ -106,7 +105,7 @@ def execute():
             eulerian_cycle_time_list_undirected.append(t1 - t0)
             undir_cycle_time_great_list.append(t1 - t0)
             undir_cycle_great_list.append(eulerian_cycle_list_undirected[i])
-            print("undirected cycle: ", eulerian_cycle_list_undirected[i])
+            #print("undirected cycle: ", eulerian_cycle_list_undirected[i])
 
         for i in range(len(dir_graph_list)):
             t0 = time()
@@ -117,7 +116,7 @@ def execute():
             eulerian_cycle_time_list_directed.append(t1 - t0)
             dir_cycle_time_great_list.append(t1 - t0)
             dir_cycle_great_list.append(eulerian_cycle_list_directed[i])
-            print("directed cycle: ", eulerian_cycle_list_directed[i])
+            #print("directed cycle: ", eulerian_cycle_list_directed[i])
 
         print (nodes_numbers_list)
         print (eulerizing_time_list_undirected)

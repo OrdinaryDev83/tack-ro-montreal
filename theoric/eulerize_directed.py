@@ -1,5 +1,4 @@
 import numpy as np
-from theoric.utils import *
 
 def shortest_distances_directed(n, edges, src):
     dist = [np.inf] * n
