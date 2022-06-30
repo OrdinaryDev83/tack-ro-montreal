@@ -138,14 +138,7 @@ def execute():
     #print(res_list)
 
 
-thread_list = []
-for i in range(1):
-    t = threading.Thread(target=execute)
-    t.start()
-    thread_list.append(t)
-
-for t in thread_list:
-    t.join()
+execute()
 
 
 res_array = np.array(res_list)
