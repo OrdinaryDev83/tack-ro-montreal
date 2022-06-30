@@ -7,16 +7,26 @@ import matplotlib
 matplotlib.use("Agg")
 
 snow_plows = 2200
-snow_plow_per_district = round(np.floor(snow_plows / len(districts)))
-print("We dispose of", snow_plow_per_district, "plows per district")
+
+dataCollect = []
 
 def subprocess(district):
     data = getData(district)
 
     snow = process_undirected(district, data)
-    process_directed(district, data, snow, snow_plow_per_district)
+    dataCollect.append(process_directed(district, data, snow))
 
 for dis in districts:
     subprocess(dis)
+
+total = 0
+for data in dataCollect:
+    name, totalweight, cycleData = data
+    total += totalweight
+
+for data in dataCollect:
+    name, totalweight, cycleData = data
+    snow_plows_count = round((totalweight / total) * snow_plows)
+    process_directed_data(name, *cycleData, snow_plows_count)
 
 print("Finished")

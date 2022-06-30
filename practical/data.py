@@ -167,7 +167,7 @@ def plot_cycle_split(name, subName, originalNxGraph, cycle, G_cycle, G_nodes, pl
     step = 0
     n = 0
     for edge in G_cycle.edges:
-        color = list(colors.values())[n]
+        color = list(colors.values())[n % len(colors.values())]
         edge_color.append(color)
         i += 1
         if step > steps_per_plow:
@@ -233,15 +233,16 @@ def save_data(name, cycle, snow, plows):
     lines = [
         "distance : " + str(round(total_distance_km, 2)) + "km\n",
         "snow : " + str(round(total_snow_volume, 2)) + "m3\n",
-        "fuel spent : " + str(round(s, 2)) + "L\n"
-        "fuel cost : " + str(round(s * avg_fuel_cost, 2)) + "$\n"
-        "time : " + hours_to_HMS(t / plows)
+        "fuel spent : " + str(round(s, 2)) + "L\n",
+        "fuel cost : " + str(round(s * avg_fuel_cost, 2)) + "$\n",
+        "time : " + hours_to_HMS(t / plows) + "$\n",
+        "plows : " + str(plows)
         ]
     with open("imgs/" + name + "/" + name + "_data.txt", 'w') as f:
         f.writelines(lines)
 
 # plot and process the data in a directed way
-def process_directed(name, data, snow, snow_plow_per_district):
+def process_directed(name, data, snow):
     if not(os.path.isdir("imgs")):
         os.mkdir("imgs")
     if not(os.path.isdir("imgs/" + name)):
@@ -291,6 +292,29 @@ def process_directed(name, data, snow, snow_plow_per_district):
     print("Plotting the cycle")
     # plot the cycle graph
     plot_cycle(name, "directed_cycle", directedNxGraph, cycle_directed, G_cycle_directed, G_nodes)
+    total_distance_km = 0
+
+    for i in range(1, len(cycle_directed)):
+        a = cycle_directed[i - 1]
+        b = cycle_directed[i]
+        key = (a, b)
+        n_key = find_key(snow, key)
+        weight = 0
+        if n_key != None:
+            weight = n_key[2]
+        total_distance_km += (weight / 1000)
+
+    data = [
+        directedNxGraph,
+        cycle_directed,
+        G_cycle_directed,
+        G_nodes,
+        G,
+    ]
+
+    return name, total_distance_km, data
+
+def process_directed_data(name, directedNxGraph, cycle_directed, G_cycle_directed, G_nodes, G, snow_plow_per_district):
     plot_cycle_split(name, "directed_cycle_split", directedNxGraph, cycle_directed, G_cycle_directed, G_nodes, snow_plow_per_district)
     save_data(name, cycle_directed, G.snow, snow_plow_per_district)
 
