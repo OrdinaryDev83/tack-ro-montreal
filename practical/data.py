@@ -18,10 +18,9 @@ def getData(district):
 
 # show the data (not a graph)
 def plot_data(name, data):
-    plt.figure()
+    plt.clf()
     path = "imgs/" + name + "/" + name + "_view.png"
     fig, ax = ox.plot_graph(data, save=True, filepath=path, show=False, dpi=1000)
-    plt.close()
 
 # extract the directed nxgraph from the data
 def extract_directed_graph(data):
@@ -51,11 +50,11 @@ def plot_graph(name, subname, graph, position):
     "pos": position
     }
 
+    plt.clf()
     fig = plt.figure()
     nx.draw(graph, **options, width=0.4)
     fig.set_facecolor("#FFFFFF")
     plt.savefig("imgs/" + name + "/" + name + "_" + subname + ".png", dpi=1000)
-    plt.close()
 
 # plot a nxgraph containing snow heights
 def plot_snow(name, subname, G, graph, position):
@@ -81,11 +80,11 @@ def plot_snow(name, subname, G, graph, position):
         edge_color.append((edge_clr, edge_clr, edge_clr, alpha))
         i += 1
 
+    plt.clf()
     fig = plt.figure()
     nx.draw(graph, edge_color=edge_color, width=0.7, **options)
     fig.set_facecolor("#00000F")
     plt.savefig("imgs/" + name + "/" + name + "_" + subname + "_snow.png", dpi=1000)
-    plt.close()
 
 # plot a cycle graph (directed graph with edges contained in the original graph, directed or not)
 def plot_cycle(name, subName, originalNxGraph, cycle, G_cycle, G_nodes):
@@ -112,7 +111,7 @@ def plot_cycle(name, subName, originalNxGraph, cycle, G_cycle, G_nodes):
         else:
             labels[key] = str(i)
 
-    plt.figure()
+    plt.clf()
     nx.draw(originalNxGraph, pos=org_position, **options, width=0.2)
 
     edge_color = []
@@ -127,7 +126,6 @@ def plot_cycle(name, subName, originalNxGraph, cycle, G_cycle, G_nodes):
 
     nx.draw(X, pos=position, **options, width=0.4, with_labels=True, labels=labels, font_size=1)
     plt.savefig("imgs/" + name + "/" + name + "_" + subName + ".png", dpi=1000)
-    plt.close()
 
 def plot_cycle_split(name, subName, originalNxGraph, cycle, G_cycle, G_nodes, plows):
     options = {
@@ -153,7 +151,7 @@ def plot_cycle_split(name, subName, originalNxGraph, cycle, G_cycle, G_nodes, pl
         else:
             labels[key] = str(i)
 
-    plt.figure()
+    plt.clf()
     nx.draw(originalNxGraph, pos=org_position, **options, width=0.2)
 
     edge_color = []
@@ -180,7 +178,6 @@ def plot_cycle_split(name, subName, originalNxGraph, cycle, G_cycle, G_nodes, pl
 
     nx.draw(X, pos=position, **options, width=0.4, with_labels=True, labels=labels, font_size=1)
     plt.savefig("imgs/" + name + "/" + name + "_" + subName + ".png", dpi=1000)
-    plt.close()
 
 def hours_to_HMS(h):
     hours = math.floor(h)

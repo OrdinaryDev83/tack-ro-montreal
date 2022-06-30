@@ -1,0 +1,6 @@
+distance : 501.09km
+snow : 2189.2m3
+fuel spent : 601.31L
+fuel cost : 1040.26$
+time : 0:5:41$
+plows : 211
