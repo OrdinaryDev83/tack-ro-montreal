@@ -64,7 +64,6 @@ def eulerize_undirected(n, edges):
     if len(oddVertices) == 0:
         return edges
 
-    # Match pairs of odd-degrees Vertices until there are no more left
     while len(oddVertices) != 0:
         oddV = oddVertices[0]
         shortestDist = shortest_relative_distances(n, edges, oddV)
@@ -75,9 +74,6 @@ def eulerize_undirected(n, edges):
         oddVertices.remove(next)
 
     return edges
-
-
-# A Changer
 
 def convertListToAdjaList(n, edges):
     L = [[] for _ in range(n)]
@@ -107,19 +103,13 @@ def find_eulerian_cycle_undirected(m, edges, startPoint):
             index_to_insert += 1
             if current_v == X:
                 break
-
-        # Checking if the current X still has unvisited edges
         unvisited_start = has_unvisited_edges(X, edges, edges_used)
-
-        # Determining the new X
         if not unvisited_start and False in edges_used:
             for v in range(len(cycle)):
                 if has_unvisited_edges(cycle[v], edges, edges_used):
                     X = cycle[v]
                     index_to_insert = v + 1
                     break
-        # at this point we loop back with possibly a new starting vertice
-        # until every edge is visited
 
     cycle.pop()
     return cycle

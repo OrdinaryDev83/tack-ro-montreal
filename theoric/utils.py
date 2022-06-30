@@ -79,13 +79,60 @@ def random_connected_graph(nodes_number):
     print("Try counter: " + str(try_counter) + " (nodes_number: " + str(nodes_number) + ", edges_number: " + str(edges_number) + ")")
     return graph_directed, graph_undirected
 
-def show_graph(G):    
+def show_nxgraph(G):
     labels = {}
     for i in range(len(G.nodes)):
         labels[i] = str(i)
 
+    edge_color = []
+    i = 0
+    for edge in G.edges:
+        edge_clr = i / (len(G.edges) - 1)
+        edge_color.append((0, 0, 0))
+        i += 1
+
     pos = nx.spring_layout(G)
     nx.draw(G, pos, with_labels=True, labels=labels)
+    plt.show()
+
+def directed_graph_from_cycle(n, cycle):
+    graph = Graph(n, None, True)
+    edges = []
+    size = len(cycle)
+
+    for i in range(size - 1):
+        edge = (cycle[i], cycle[i + 1], i / size)
+        edges.append(edge)
+
+    finalEdge = (cycle[-1], cycle[0], 1)
+    edges.append(finalEdge)
+
+    graph.edges = edges
+
+    return graph
+
+def show_cycle(n, cycle):
+    G_cycle = directed_graph_from_cycle(n, cycle)
+
+    labels = {}
+    for i in range(0, len(cycle)):
+        key = cycle[i]
+        if key in labels:
+            labels[key] += "\n" + str(i)
+        else:
+            labels[key] = str(i)
+
+
+    edge_color = []
+    i = 0
+    for edge in G_cycle.edges:
+        edge_clr = i / (len(G_cycle.edges) - 1)
+        edge_color.append((edge_clr, 0, 1 - edge_clr))
+        i += 1
+
+    X = directed_graph_to_nxgraph(G_cycle)
+
+    nx.draw(X, pos=nx.spring_layout(X), edge_color=edge_color, with_labels=True, labels=labels)
     plt.show()
     
     

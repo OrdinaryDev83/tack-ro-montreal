@@ -1,7 +1,7 @@
 import numpy as np
 
 def shortest_distances_directed(n, edges, src):
-    dist = [np.inf] * n
+    dist = [999999] * n
     dist[src] = 0
     oldDist = dist.copy()
 

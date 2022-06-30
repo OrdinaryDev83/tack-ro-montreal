@@ -17,10 +17,11 @@ def getData(district):
     return data
 
 # show the data (not a graph)
-def plot_data(name, data):
-    plt.clf()
+def plot_data(name, data, show=False):
+    if not(show):
+        plt.clf()
     path = "imgs/" + name + "/" + name + "_view.png"
-    fig, ax = ox.plot_graph(data, save=True, filepath=path, show=False, dpi=1000)
+    fig, ax = ox.plot_graph(data, save=True, filepath=path, show=show, dpi=1000)
 
 # extract the directed nxgraph from the data
 def extract_directed_graph(data):
@@ -42,7 +43,7 @@ def get_position(graph):
     return position
 
 # plot a nxgraph
-def plot_graph(name, subname, graph, position):
+def plot_graph(name, subname, graph, position, show=False):
     options = {
     "node_size": 0.3,
     "arrowsize": 3,
@@ -54,10 +55,14 @@ def plot_graph(name, subname, graph, position):
     fig = plt.figure()
     nx.draw(graph, **options, width=0.4)
     fig.set_facecolor("#FFFFFF")
-    plt.savefig("imgs/" + name + "/" + name + "_" + subname + ".png", dpi=1000)
+    
+    if show:
+        plt.show()
+    else:
+        plt.savefig("imgs/" + name + "/" + name + "_" + subname + ".png", dpi=1000)
 
 # plot a nxgraph containing snow heights
-def plot_snow(name, subname, G, graph, position):
+def plot_snow(name, subname, G, graph, position, show=False):
     options = {
     "node_size": 0.3,
     "arrowsize": 3,
@@ -84,10 +89,14 @@ def plot_snow(name, subname, G, graph, position):
     fig = plt.figure()
     nx.draw(graph, edge_color=edge_color, width=0.7, **options)
     fig.set_facecolor("#00000F")
-    plt.savefig("imgs/" + name + "/" + name + "_" + subname + "_snow.png", dpi=1000)
+    
+    if show:
+        plt.show()
+    else:
+        plt.savefig("imgs/" + name + "/" + name + "_" + subname + "_snow.png", dpi=1000)
 
 # plot a cycle graph (directed graph with edges contained in the original graph, directed or not)
-def plot_cycle(name, subName, originalNxGraph, cycle, G_cycle, G_nodes):
+def plot_cycle(name, subName, originalNxGraph, cycle, G_cycle, G_nodes, show=False):
     options = {
         "node_size": 0.3,
         "arrowsize": 3,
@@ -125,9 +134,12 @@ def plot_cycle(name, subName, originalNxGraph, cycle, G_cycle, G_nodes):
     X = directed_graph_to_nxgraph(G_cycle)
 
     nx.draw(X, pos=position, **options, width=0.4, with_labels=True, labels=labels, font_size=1)
-    plt.savefig("imgs/" + name + "/" + name + "_" + subName + ".png", dpi=1000)
+    if show:
+        plt.show()
+    else:
+        plt.savefig("imgs/" + name + "/" + name + "_" + subName + ".png", dpi=1000)
 
-def plot_cycle_split(name, subName, originalNxGraph, cycle, G_cycle, G_nodes, plows):
+def plot_cycle_split(name, subName, originalNxGraph, cycle, G_cycle, G_nodes, plows, show=False):
     options = {
         "node_size": 0.3,
         "arrowsize": 3,
@@ -177,7 +189,10 @@ def plot_cycle_split(name, subName, originalNxGraph, cycle, G_cycle, G_nodes, pl
     X = directed_graph_to_nxgraph(G_cycle)
 
     nx.draw(X, pos=position, **options, width=0.4, with_labels=True, labels=labels, font_size=1)
-    plt.savefig("imgs/" + name + "/" + name + "_" + subName + ".png", dpi=1000)
+    if show:
+        plt.show()
+    else:
+        plt.savefig("imgs/" + name + "/" + name + "_" + subName + ".png", dpi=1000)
 
 def hours_to_HMS(h):
     hours = math.floor(h)
@@ -196,7 +211,7 @@ def find_key(d, value):
     return None
 
 # save the calculated data in a file
-def save_data(name, cycle, snow, plows):
+def save_data(name, cycle, snow, plows, show=False):
     total_snow_volume = 0
     total_distance_km = 0
 
@@ -235,18 +250,23 @@ def save_data(name, cycle, snow, plows):
         "time : " + hours_to_HMS(t / plows) + "$\n",
         "plows : " + str(plows)
         ]
-    with open("imgs/" + name + "/" + name + "_data.txt", 'w') as f:
-        f.writelines(lines)
+    
+    if not(show):
+        with open("imgs/" + name + "/" + name + "_data.txt", 'w') as f:
+            f.writelines(lines)
+    else:
+        for line in lines:
+            print(line)
 
 # plot and process the data in a directed way
-def process_directed(name, data, snow):
+def process_directed(name, data, snow, show=False):
     if not(os.path.isdir("imgs")):
         os.mkdir("imgs")
     if not(os.path.isdir("imgs/" + name)):
         os.mkdir("imgs/" + name)
     print("Processing " + name + " (directed)")
     
-    plot_data(name, data)
+    plot_data(name, data, show)
 
     # convert it to a nxgraph
     directedNxGraph = extract_directed_graph(data)
@@ -255,7 +275,7 @@ def process_directed(name, data, snow):
     position = get_position(directedNxGraph)
 
     # plot the nx graph
-    plot_graph(name, "raw_directed", directedNxGraph, position)
+    plot_graph(name, "raw_directed", directedNxGraph, position, show)
 
     # convert it to our graph class, keeping the old node IDs
     G, G_nodes = directed_nxgraph_to_graph(directedNxGraph)
@@ -270,7 +290,7 @@ def process_directed(name, data, snow):
 
     print("Adding the snow and lenghts the drone saw")
     G.add_snow_and_weights(G.edges, snow) # according to a gaussian curve distribution of the snow height
-    plot_snow(name, "directed", G, directedNxGraph, position)
+    plot_snow(name, "directed", G, directedNxGraph, position, show)
 
     # end snow
     print("Is the graph Eulerian:", G.is_eulerian(), "/", "Edges count:", len(G.edges))
@@ -288,7 +308,7 @@ def process_directed(name, data, snow):
 
     print("Plotting the cycle")
     # plot the cycle graph
-    plot_cycle(name, "directed_cycle", directedNxGraph, cycle_directed, G_cycle_directed, G_nodes)
+    plot_cycle(name, "directed_cycle", directedNxGraph, cycle_directed, G_cycle_directed, G_nodes, show)
     total_distance_km = 0
 
     for i in range(1, len(cycle_directed)):
@@ -311,19 +331,19 @@ def process_directed(name, data, snow):
 
     return name, total_distance_km, data
 
-def process_directed_data(name, directedNxGraph, cycle_directed, G_cycle_directed, G_nodes, G, snow_plow_per_district):
-    plot_cycle_split(name, "directed_cycle_split", directedNxGraph, cycle_directed, G_cycle_directed, G_nodes, snow_plow_per_district)
-    save_data(name, cycle_directed, G.snow, snow_plow_per_district)
+def process_directed_data(name, directedNxGraph, cycle_directed, G_cycle_directed, G_nodes, G, snow_plow_per_district, show=False):
+    plot_cycle_split(name, "directed_cycle_split", directedNxGraph, cycle_directed, G_cycle_directed, G_nodes, snow_plow_per_district, show)
+    save_data(name, cycle_directed, G.snow, snow_plow_per_district, show)
 
 # plot and process the data in a undirected way
-def process_undirected(name, data):
+def process_undirected(name, data, show=False):
     if not(os.path.isdir("imgs")):
         os.mkdir("imgs")
     if not(os.path.isdir("imgs/" + name)):
         os.mkdir("imgs/" + name)
     print("Processing " + name + " (undirected)")
 
-    plot_data(name, data)
+    plot_data(name, data, show)
 
     # convert it to a nxgraph
     undirectedNxGraph = extract_undirected_graph(data)
@@ -332,7 +352,7 @@ def process_undirected(name, data):
     position = get_position(undirectedNxGraph)
 
     # plot the nx graph
-    plot_graph(name, "raw_undirected", undirectedNxGraph, position)
+    plot_graph(name, "raw_undirected", undirectedNxGraph, position, show)
 
     # convert it to our graph class, keeping the old node IDs
     G, G_nodes = undirected_nxgraph_to_graph(undirectedNxGraph)
@@ -343,7 +363,7 @@ def process_undirected(name, data):
 
     print("Adding snow")
     G.add_random_snow() # according to a gaussian curve distribution of the snow height
-    plot_snow(name, "undirected", G, undirectedNxGraph, position)
+    plot_snow(name, "undirected", G, undirectedNxGraph, position, show)
     print("Removing unsnowy non bridges roads")
     G.remove_unsnowy() # remove unsnowy and not "bridges" roads
 
@@ -368,7 +388,7 @@ def process_undirected(name, data):
 
     print("Plotting the cycle")
     # plot the cycle graph
-    plot_cycle(name, "undirected_cycle", undirectedNxGraph, cycle_undirected, G_cycle_undirected, G_nodes)
+    plot_cycle(name, "undirected_cycle", undirectedNxGraph, cycle_undirected, G_cycle_undirected, G_nodes, show)
 
     # return the snow seen by the drone + street lengths
     return G.snow
