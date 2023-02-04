@@ -1,12 +1,15 @@
+⚠️ English Translation W.I.P ⚠️
+
 # tack-ro-montreal
-On s’intéresse à l’optimisation des trajets des équipes de déneigement de la ville de Montréal.
+In this project, we are focusing on optimizing the routes of the city of Montreal's snow removal teams.
 
-# Structure du rendu
-Le dossier 'theoric' contient les cas théoriques de survol du drone et du passage de la déneigeuse.
-Le dossier 'practical' contient les cas pratiques d'optimisation : par exemple comment répartir efficacement les 2200 déneigeuses fournies par la ville de Montreal.
+# Structure
+ * 'theoretical' folder : cases of drone flight and snowplow passage.
+ * 'practical' folder : practical optimization cases, for example, how to effectively distribute the 2200 snowplows provided by the city of Montreal.
 
-# Installation
-Aucune librairie autre que celles fournies dans le sujet n'a été utilisée.
+# Setup
+No library other than those provided in the subject was used.
+The librairies required are Numpy and OSMNX.
 
-# Démarche
-Nous avons d'abord testé nos algorithmes sur des graphes non orientés puis sur des graphes orientés. Ensuite nous avons pris un district de Montréal puis appliqué sur tous les districts.
+# Detailed Explanation
+**See the Notebook file named 'Demo.ipynb'**
