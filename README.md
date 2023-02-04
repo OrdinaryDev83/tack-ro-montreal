@@ -10,7 +10,7 @@ This project is an unguided open Operations Research project from EPITA.
 
 # Setup
 No library other than those provided in the subject was used.
-The librairies required are Numpy and OSMNX.
+The librairies required are Numpy, Matplotlib and OSMNX.
 
 # Detailed Explanation
 **See the Notebook file named 'Demo.ipynb'**
