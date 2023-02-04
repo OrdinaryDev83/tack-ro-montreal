@@ -15,6 +15,6 @@ The librairies required are Numpy and OSMNX.
 # Detailed Explanation
 **See the Notebook file named 'Demo.ipynb'**
 
-# ⚠️ CHEATING ⚠️
-By using the code given in this project you are not allowed to use it for EPITA.
+# ⚠️ DISCLAIMER ⚠️
+By using the code given in this project you are not allowed to use it for EPITA. (don't cheat)
 However you can use it for any other purposes.
