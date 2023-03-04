@@ -13,7 +13,7 @@ No library other than those provided in the subject was used.
 The librairies required are Numpy, Matplotlib and OSMNX.
 
 # Detailed Explanation
-**See the Notebook file named 'Demo.ipynb'**
+**See the Notebook file named *'Demo.ipynb'***
 
 # ⚠️ DISCLAIMER ⚠️
 By using the code given in this project you are not allowed to use it for EPITA. (don't cheat)
